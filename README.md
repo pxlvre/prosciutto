@@ -1,46 +1,109 @@
-# Prosciutto
+# prosciutto
 
 <div align="center">
   <img src="public/prosciutto.png" alt="Prosciutto Logo" width="200"/>
 </div>
 
-A DevOps foundry library that provides enhanced vm functionality and deployment management tools for Ethereum development workflows.
+A Foundry toolkit providing network configuration management, chain metadata, and deployment utilities for multi-chain Ethereum development.
 
 ## Overview
 
-Prosciutto is a foundry library designed to streamline DevOps operations in EVM-base chains development. It offers a powerful wrapper around the foundry vm interface, providing advanced deployment tracking, contract management, and development utilities.
+prosciutto is a Foundry library designed to simplify multi-chain development workflows. It provides a robust configuration system with comprehensive blockchain metadata, inspired by viem's chain definitions, enabling seamless deployments across 17+ networks.
 
 ## Core Features
 
-- **Enhanced VM Interface**: ProVm contract that wraps and extends foundry's vm functionality
-- **Deployment Tracking**: Comprehensive deployment management across multiple chains
-- **Contract Discovery**: Advanced utilities for finding and managing deployed contracts
-- **Chain Management**: Built-in support for multiple networks and chain configurations
+### **ProChains Library**
+
+- **17+ Supported Networks**: Ethereum, Arbitrum, Optimism, Base, Polygon, Avalanche, BSC, zkSync, and more
+- **Rich Chain Metadata**: RPC URLs, block explorers, native currencies, contract addresses
+- **viem-Compatible**: Adapted from viem's comprehensive chain definitions
+- **Network Classification**: Automatic mainnet/testnet/local detection
+
+### **ProConfig System**
+
+- **Abstract Configuration**: Generic base class for any domain (DeFi, NFT, Gaming, etc.)
+- **Environment-Aware**: Automatic network detection and configuration
+- **Extensible Design**: Easy to add domain-specific configuration fields
+- **Best Practices**: Following Cyfrin's HelperConfig patterns
+
+### **Additional Utilities**
+
+- **ProScript**: Enhanced script functionality with deployment tracking
+- **ProFs**: File system utilities for Foundry scripts
+- **ProLanguages**: Language and localization support
+- **ProZkSync**: zkSync-specific utilities
 
 ## Installation
 
 ```bash
-forge install pxlvre/prosciutto
+forge install your-org/prosciutto
 ```
 
 ## Quick Start
 
+### Basic Configuration
+
 ```solidity
-import {ProScript as Script} from "prosciutto/ProScript.sol";
+import {ProConfig} from "prosciutto/ProConfig.sol";
+import {ProChains} from "prosciutto/ProChains.sol";
 
-contract MyScript is Script {
-    function run() public {
-        // Get the most recent deployment
-        address myContract = vm.getMostRecentDeployment("MyContract");
+contract MyDeployer is ProConfig {
+    constructor() {
+        _initializeDefaultConfigs();
+    }
 
-        // Check if deployment exists
-        bool exists = vm.deploymentExists("MyContract");
+    function deploy() external {
+        // Get rich chain metadata
+        ProChains.Chain memory chain = getCurrentChain();
+        BaseNetworkConfig memory config = getNetworkConfig();
 
-        // Get deployment info
-        DeploymentInfo memory info = vm.getDeploymentInfo("MyContract");
+        vm.startBroadcast(config.deployerKey);
+
+        console.log("Deploying to:", chain.name);
+        console.log("Native Currency:", chain.nativeCurrency.symbol);
+        console.log("Block Explorer:", chain.blockExplorer.url);
+
+        // Your deployment logic here
+
+        vm.stopBroadcast();
     }
 }
 ```
+
+### Domain-Specific Extension
+
+```solidity
+contract DeFiDeployer is ProConfig {
+    struct DeFiConfig {
+        uint256 deployerKey;
+        address deployer;
+        ProChains.Chain chain;
+        // Add your domain-specific fields
+        address priceFeed;
+        address token;
+        address entryPoint;
+    }
+
+    function getDeFiConfig() public view returns (DeFiConfig memory) {
+        // Implement domain-specific configuration logic
+    }
+}
+```
+
+## Supported Networks
+
+**Mainnets:** Ethereum, Arbitrum One, Optimism, Base, Polygon, Avalanche, BSC, zkSync Era  
+**Testnets:** Sepolia, Arbitrum Sepolia, Optimism Sepolia, Base Sepolia, Polygon Mumbai, Avalanche Fuji, BSC Testnet, zkSync Sepolia  
+**Development:** Local/Anvil
+
+Each network includes comprehensive metadata: RPC URLs, block explorers, native currency details, standard contract addresses (Multicall3, ENS), and more.
+
+## Examples
+
+See the [`examples/`](./examples/) directory for complete implementation patterns:
+
+- [`BasicConfigExample.s.sol`](./examples/BasicConfigExample.s.sol) - Simple usage
+- [`DeFiConfigExample.s.sol`](./examples/DeFiConfigExample.s.sol) - Complex domain-specific extension
 
 ## License
 
