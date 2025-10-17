@@ -1,0 +1,3 @@
+[submodule "lib/cortado"]
+	path = lib/cortado
+	url = https://github.com/pxlvre/cortado
