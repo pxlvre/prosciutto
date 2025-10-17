@@ -26,27 +26,25 @@ forge install pxlvre/prosciutto
 ## Quick Start
 
 ```solidity
-import {ProVm} from "prosciutto/ProVm.sol";
+import {ProScript as Script} from "prosciutto/ProScript.sol";
 
 contract MyScript is Script {
-    ProVm public proVm = new ProVm();
-
     function run() public {
         // Get the most recent deployment
-        address myContract = proVm.getMostRecentDeployment("MyContract");
+        address myContract = vm.getMostRecentDeployment("MyContract");
 
         // Check if deployment exists
-        bool exists = proVm.deploymentExists("MyContract");
+        bool exists = vm.deploymentExists("MyContract");
 
         // Get deployment info
-        ProVm.DeploymentInfo memory info = proVm.getDeploymentInfo("MyContract");
+        DeploymentInfo memory info = vm.getDeploymentInfo("MyContract");
     }
 }
 ```
 
 ## License
 
-This project is licensed under the [AGPL-3.0-or-later](LICENSE) license.
+This project is licensed under the [AGPL-3.0](LICENSE) license.
 
 The choice of AGPL-3.0 aligns with the principles outlined by Vitalik Buterin in his post ["Why I used to prefer permissive licenses and now favor copyleft"](https://vitalik.eth.limo/general/2025/07/07/copyleft.html), ensuring that improvements and derivatives remain open and accessible to the community.
 

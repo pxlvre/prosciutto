@@ -24,3 +24,6 @@ reports/*.*
 
 # zkSync
 zkout/
+
+# tmp files
+tmp/
